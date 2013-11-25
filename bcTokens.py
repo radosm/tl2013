@@ -1,25 +1,25 @@
 import ply.lex as lex
 import re
 
-#tokens = ('INT', 'PARFLOAT', 'CONCAT', 'DOT', 'PLAY')
-literals = '{}'
+tokens = ('INT', 'FLOAT', 'CONCAT', 'DOT', 'PLAY')
+literals = '{}()'
 t_CONCAT = r';'
 t_DOT = r'\.'
 t_PLAY = r'play'
 
-def t_INT(t):
-    r'[-+]?\d+'
+def t_FLOAT(t):
+    r'[-+]?\d*\.\d+'
     try:
-        t.value = int(t.value)
+        t.value = float(t.value)
     except ValueError:
         print "Valor invalido: %s" % t.value
         t.value = 0
     return t
 
-def t_FLOAT(t):
-    r'[-+]?\d*\.?\d+'
+def t_INT(t):
+    r'[-+]?\d+'
     try:
-        t.value = float(t.value)
+        t.value = int(t.value)
     except ValueError:
         print "Valor invalido: %s" % t.value
         t.value = 0

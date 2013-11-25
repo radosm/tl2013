@@ -21,11 +21,13 @@ def p_buffer_brackets(t):
     t[0] = t[2]
 
 def p_buffer_play(t):
-    '''buffer : buffer DOT PLAY PARFLOAT
+    '''buffer : buffer DOT PLAY par
               | buffer DOT PLAY'''
-    print t[4]
     t[0] = t[1]
-    print 'p_buffer_play: %s' % t[1]
+    if len(t) == 5:
+        print 'p_buffer_play: %s (%s)' % (t[1], t[4])
+    else:
+        print 'p_buffer_play: %s' % t[1]
     buf = array(t[1])
     sonido = pygame.mixer.Sound(buf)
     canal = sonido.play()
@@ -46,7 +48,11 @@ def p_buffer_int(t):
     print 'p_buffer_int: %s' % t[1]
     t[0] = [t[1]]
 
-
+def p_par(t):
+    '''par : '(' INT ')'
+            | '(' FLOAT ')' '''
+    print 'p_par %s' % t[2]
+    t[0] = t[2]
 
 def p_error(t):
     print "Error de sintaxis en: '%s'" % t.value
