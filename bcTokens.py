@@ -1,11 +1,12 @@
 import ply.lex as lex
-import re
 
-tokens = ('INT', 'FLOAT', 'CONCAT', 'DOT', 'PLAY')
-literals = '{}()'
+tokens = ('INT', 'FLOAT', 'CONCAT', 'DOT', 'PLAY', 'SIN', 'SIL')
+literals = '{}(),'
 t_CONCAT = r';'
 t_DOT = r'\.'
 t_PLAY = r'play'
+t_SIN = r'sin'
+t_SIL = r'silence|sil'
 
 def t_FLOAT(t):
     r'[-+]?\d*\.\d+'
@@ -24,17 +25,6 @@ def t_INT(t):
         print "Valor invalido: %s" % t.value
         t.value = 0
     return t
-
-'''
-def t_PARFLOAT(t):
-    r'\([-+]?\d*\.?\d+\)'
-    try:
-        t.value = float(re.match('\(([-+]?\d*\.?\d+)\)', t.value).group(1))
-    except ValueError:
-        print "Valor invalido: %s" % t.value
-        t.value = 0
-    return t
-'''
 
 # Ignoramos espacios y tabs
 t_ignore = " \t"
