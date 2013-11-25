@@ -10,52 +10,65 @@ from debug import log
 # Reglas de parsing
 
 precedence = (
-    ('left', '+'),
-    ('left', 'CONCAT'),
-    ('left', 'DOT')
+    ('left', ';'),
+    ('left', '+', '-'),
+    ('right', 'UMINUS'), # UMINUS = Unitary Minus
+    
+    ('left', '.')
 )
 
 # Diccionario de nombres
 names = {}
 
-def p_buffer_brackets(t):
+def p_buffer_brackets(b):
     '''buffer : '{' buffer '}' '''
-    t[0] = t[2]
+    b[0] = b[2]
 
-def p_buffer_concat(t):
-    'buffer : buffer CONCAT buffer'
-    t[0] = hstack((t[1], t[3]))
-    log('p_buffer_concat %s;%s = %s' % (t[1], t[3], t[0]))
+def p_buffer_concat(b):
+    '''buffer : buffer ';' buffer'''
+    b[0] = hstack((b[1], b[3]))
+    log('p_buffer_concat %s;%s = %s' % (b[1], b[3], b[0]))
 
-def p_buffer_sum(t):
+def p_buffer_sum(b):
     '''buffer : buffer '+' buffer'''
-    t[0] = t[1] + t[3]
-    log('p_buffer_sum: %s + %s = %s' % (t[1], t[3], t[0]))
+    b[0] = b[1] + b[3]
+    log('p_buffer_sum: %s + %s = %s' % (b[1], b[3], b[0]))
 
-def p_buffer_int(t):
-    'buffer : INT'
-    log('p_buffer_int: %s' % t[1])
-    t[0] = array([t[1]])
+def p_buffer_res(b):
+    '''buffer : buffer '-' buffer'''
+    log('p_buffer_res: %s - %s' % (b[1], b[3]))
+    b[0] = b[1] - b[3]
+    log('p_buffer_res: %s - %s = %s' % (b[1], b[3], b[0]))
 
-def p_buffer_m(t):
+def p_buffer_signed_int(b):
+    '''buffer : '-' UINT %prec UMINUS '''
+    b[0] = -b[2]
+    log('p_buffer_uint: -%s = %s' % (b[2], b[0]))
+
+def p_buffer_unsigned_int(b):
+    'buffer : UINT'
+    b[0] = array([b[1]])
+    log('p_buffer_int: %s' % b[1])
+
+def p_buffer_m(b):
     'buffer : m'
-    log('p_buffer_m: %s' % t[1])
-    t[0] = t[1]
+    b[0] = b[1]
+    log('p_buffer_m: %s' % b[1])
 
-def p_buffer_g(t):
+def p_buffer_g(b):
     'buffer : g'
-    log('p_buffer_g: %s' % t[1])
-    t[0] = t[1]
+    b[0] = b[1]
+    log('p_buffer_g: %s' % b[1])
 
-def p_m_play(t):
-    '''m : buffer DOT PLAY par
-         | buffer DOT PLAY'''
-    t[0] = t[1]
-    if len(t) == 5:
-        log('p_m_play: %s (%s)' % (t[1], t[4]))
+def p_m_play(m):
+    '''m : buffer '.' PLAY par
+         | buffer '.' PLAY'''
+    m[0] = m[1]
+    if len(m) == 5:
+        log('p_m_play: %s (%s)' % (m[1], m[4]))
     else:
-        log('p_m_play: %s' % t[1])
-    sonido = pygame.mixer.Sound(t[1])
+        log('p_m_play: %s' % m[1])
+    sonido = pygame.mixer.Sound(m[1])
     canal = sonido.play()
     canal.set_endevent(SONG_END)
     
@@ -64,23 +77,22 @@ def p_m_play(t):
             if event.type == SONG_END:
                 return
 
-def p_g(t):
+def p_g(g):
     '''g : SIN par2
          | SIL'''
-    log('p_g: %s' % t[0])
-    t[0] = array([333]) if t[1] == 'sil' else array([444]) # reemplazar por sin (par1, par2)
+    g[0] = array([333]) if g[1][:3] == 'sil' else array([444]) # reemplazar por sin (par1, par2)
+    log('p_g: %s' % g[0])
 
-def p_par(t):
-    '''par : '(' INT ')'
+def p_par(p):
+    '''par : '(' UINT ')'
             | '(' FLOAT ')' '''
-    log('p_par %s' % t[2])
-    t[0] = t[2]
+    p[0] = p[2]
+    log('p_par %s' % p[2])
 
-def p_par2(t):
+def p_par2(p):
     '''par2 : '(' FLOAT ',' FLOAT ')' '''
-    log('p_par2 (%s, %s)' % (t[2], t[4]))
-    t[0] = (t[2], t[4])
-
+    p[0] = (p[2], p[4])
+    log('p_par2 (%s, %s)' % (p[2], p[4]))
 
 def p_error(t):
     log("Error de sintaxis en: '%s'" % t.value)
