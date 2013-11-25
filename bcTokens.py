@@ -1,7 +1,7 @@
 import ply.lex as lex
 
 tokens = ('INT', 'FLOAT', 'CONCAT', 'DOT', 'PLAY', 'SIN', 'SIL')
-literals = '{}(),'
+literals = '{}(),+'
 t_CONCAT = r';'
 t_DOT = r'\.'
 t_PLAY = r'play'
@@ -9,7 +9,7 @@ t_SIN = r'sin'
 t_SIL = r'silence|sil'
 
 def t_FLOAT(t):
-    r'[-+]?\d*\.\d+'
+    r'-?\d*\.\d+'
     try:
         t.value = float(t.value)
     except ValueError:
@@ -18,7 +18,7 @@ def t_FLOAT(t):
     return t
 
 def t_INT(t):
-    r'[-+]?\d+'
+    r'-?\d+'
     try:
         t.value = int(t.value)
     except ValueError:

@@ -1,11 +1,16 @@
+import debug
+from debug import log
 from bcGrammar import *
 
-print 'Generando la entrada'
+debug.habilitado = debug.SIMPLE
+
+log('Generando la entrada')
 #valores = range(8,15)
 #entrada = ';'.join(map(lambda x: str(x), valores)) + '.play'
 
 entrada = 'sin(2.1,1.8).play;silence'
-print 'Haciendo el parsing'
-resultado = yacc.parse(entrada)
+entrada = '3+21'
+log('Haciendo el parsing')
+resultado = yacc.parse(entrada, debug = debug.habilitado == debug.FULL)
 
-print 'Fin'
+log('Fin')
