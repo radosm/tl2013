@@ -1,9 +1,10 @@
+import config
 import ply.yacc as yacc
 from bcTokens import *
 from numpy import *
 import pygame
 pygame.init()
-pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=4096)
+pygame.mixer.init(frequency=config.SAMPLING_RATE, size=config.SAMPLE_SIZE, channels=1, buffer=4096)
 SONG_END = pygame.USEREVENT + 1
 from debug import log
 
@@ -20,6 +21,32 @@ precedence = (
 # Diccionario de nombres
 names = {}
 
+def resample(b, l):
+    nuevo = array(range(0, l))
+    lenB = len(b)
+    for i in range(0, l):
+        nuevo[i] = b[i*lenB/l]
+    return nuevo
+
+def resize(b, l):
+    nuevo = array(range(0, l))
+    lenB = len(b)
+    for i in range(0, l):
+        nuevo[i] = b[i % lenB]
+    return nuevo
+
+def oper(op, buffer_a, buffer_b):
+    if len(buffer_a) < len(buffer_b):
+        a = resize(buffer_a, len(buffer_b))
+        b = buffer_b
+    else:
+        a = buffer_a
+        b = resize(buffer_b, len(buffer_a))
+    nuevo = array(range(0, len(a)))
+    for i in range(0, len(a)):
+        nuevo[i] = op(a[i], b[i])
+    return nuevo
+
 def p_buffer_llaves(b):
     '''buffer : '{' buffer '}' '''
     b[0] = b[2]
@@ -31,22 +58,22 @@ def p_buffer_concat(b):
 
 def p_buffer_sum(b):
     '''buffer : buffer '+' buffer'''
-    b[0] = b[1] + b[3]
+    b[0] = oper(lambda x, y: x + y, b[1], b[3])
     log('p_buffer_sum: %s + %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_res(b):
     '''buffer : buffer '-' buffer'''
-    b[0] = b[1] - b[3]
+    b[0] = oper(lambda x, y: x - y, b[1], b[3])
     log('p_buffer_res: %s - %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_mul(b):
     '''buffer : buffer '*' buffer'''
-    b[0] = b[1] * b[3]
+    b[0] = oper(lambda x, y: x * y, b[1], b[3])
     log('p_buffer_mul: %s * %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_div(b):
     '''buffer : buffer '/' buffer'''
-    b[0] = b[1] / b[3]
+    b[0] = oper(lambda x, y: x / y, b[1], b[3])
     log('p_buffer_div: %s / %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_signed_int(b):
@@ -85,6 +112,17 @@ def p_m_play(m):
         for event in pygame.event.get():
             if event.type == SONG_END:
                 return
+
+def p_m_reduce_expand(m):
+    '''m : buffer '.' REDUCE par
+         | buffer '.' EXPAND par '''
+    l = config.BEAT * int(m[4])
+    if ((m[3] == 'reduce') and (l < len(m[1]))) or \
+       ((m[3] == 'expand') and (l > len(m[1]))):
+        m[0] = resample(m[1], l)
+    else:
+        m[0] = m[1]
+    log('p_m_%s: resample(%s, %s) = %s' % (m[3], m[1], l, m[0]))
 
 def p_g(g):
     '''g : SIN par2

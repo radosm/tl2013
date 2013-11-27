@@ -1,8 +1,5 @@
-NONE = 0
-SIMPLE = 1
-FULL = 2
-habilitado = NONE
+import config
 
 def log(mensaje):
-    if habilitado != NONE:
+    if config.DEBUG != config.DEBUG_DESHABILITADO:
         print (mensaje)
