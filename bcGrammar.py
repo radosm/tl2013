@@ -3,7 +3,7 @@ from bcTokens import *
 from numpy import *
 import pygame
 pygame.init()
-pygame.mixer.init(frequency=44100,size=-16,channels=1,buffer=4096)
+pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=4096)
 SONG_END = pygame.USEREVENT + 1
 from debug import log
 
@@ -12,15 +12,15 @@ from debug import log
 precedence = (
     ('left', ';'),
     ('left', '+', '-'),
-    ('right', 'UMINUS'), # UMINUS = Unitary Minus
-    
+    ('left', '*', '/'),
+    ('right', 'UMINUS'), # UMINUS = Unary Minus
     ('left', '.')
 )
 
 # Diccionario de nombres
 names = {}
 
-def p_buffer_brackets(b):
+def p_buffer_llaves(b):
     '''buffer : '{' buffer '}' '''
     b[0] = b[2]
 
@@ -36,9 +36,18 @@ def p_buffer_sum(b):
 
 def p_buffer_res(b):
     '''buffer : buffer '-' buffer'''
-    log('p_buffer_res: %s - %s' % (b[1], b[3]))
     b[0] = b[1] - b[3]
     log('p_buffer_res: %s - %s = %s' % (b[1], b[3], b[0]))
+
+def p_buffer_mul(b):
+    '''buffer : buffer '*' buffer'''
+    b[0] = b[1] * b[3]
+    log('p_buffer_mul: %s * %s = %s' % (b[1], b[3], b[0]))
+
+def p_buffer_div(b):
+    '''buffer : buffer '/' buffer'''
+    b[0] = b[1] / b[3]
+    log('p_buffer_div: %s / %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_signed_int(b):
     '''buffer : '-' UINT %prec UMINUS '''
