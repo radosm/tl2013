@@ -14,7 +14,8 @@ log('Generando la entrada')
 #entrada = ';'.join(map(lambda x: str(x), valores)) + '.play'
 
 entrada = 'sin(2.1,1.8).play;silence.play(3)'
-entrada = '{2;3;4;8}*{1;2;3};{{4;8;6}/2};{2;3}&{6;4}'
+entrada = '{2;3;4;8}*{1;2;3};{{4;8;6}/2};{2;3}&{6;4}.post'
+entrada = '{2;3;4;8}.loop(3).post'
 log('Haciendo el parsing')
 resultado = yacc.parse(entrada, debug = config.DEBUG == config.DEBUG_FULL)
 

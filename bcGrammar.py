@@ -138,7 +138,7 @@ def p_g(g):
 
 def p_par(p):
     '''par : '(' UINT ')'
-            | '(' FLOAT ')' '''
+           | '(' FLOAT ')' '''
     p[0] = p[2]
     log('p_par %s' % p[2])
 
@@ -146,6 +146,18 @@ def p_par2(p):
     '''par2 : '(' FLOAT ',' FLOAT ')' '''
     p[0] = (p[2], p[4])
     log('p_par2 (%s, %s)' % (p[2], p[4]))
+
+def p_m_post(m):
+    ''' m : buffer '.' POST'''
+    m[0] = m[1]
+    print m[1]
+    log('p_m_post: %s' % m[1])
+
+def p_m_loop(m):
+    '''m : buffer '.' LOOP par'''
+    l = int(m[4])
+    m[0] = tile(m[1], l)
+    log('p_m_loop: %s %s' %(m[1], m[4]))
 
 def p_error(t):
     log("Error de sintaxis en: '%s'" % t.value)
