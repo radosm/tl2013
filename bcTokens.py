@@ -1,7 +1,7 @@
 import ply.lex as lex
 
-tokens   = ('UINT', 'FLOAT', 'PLAY', 'SIN', 'SIL',
-            'EXPAND', 'REDUCE', 'POST', 'LOOP', 'TUNE')
+tokens   = ('UINT', 'FLOAT', 'PLAY', 'SIN', 'SIL', 'EXPAND', 
+            'REDUCE', 'POST', 'LOOP', 'TUNE', 'FILL')
 literals = '{}().;,&+-*/'
 t_PLAY   = r'play'
 t_SIN    = r'sin'
@@ -11,6 +11,7 @@ t_REDUCE = r'reduce'
 t_POST   = r'post'
 t_LOOP   = r'loop'
 t_TUNE   = r'tune'
+t_FILL   = r'fill'
 
 def t_FLOAT(t):
     r'-?\d*\.\d+'

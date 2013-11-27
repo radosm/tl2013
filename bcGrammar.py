@@ -36,6 +36,16 @@ def resize(b, l):
         nuevo[i] = b[i % lenB]
         return nuevo
 
+def fill(b, n):
+    l = config.BEAT * n
+    nuevo = array(range(0, l))
+    for i in range(0, l):
+        if i < len(b):
+            nuevo[i] = b[i]
+        else:
+            nuevo[i] = 0.0
+    return nuevo
+
 def oper(op, buffer_a, buffer_b):
     if len(buffer_a) < len(buffer_b):
         a = resize(buffer_a, len(buffer_b))
@@ -166,8 +176,10 @@ def p_m_tune(m):
     m[0] = resample(m[1], l)
     log('p_m_tune: %s %s' % (m[1], m[4]))
 
-#def p_m_fill(m):
-#    '''m : buffer '.' FILL par'''
+def p_m_fill(m):
+    '''m : buffer '.' FILL par'''
+    m[0] = fill(m[1], int(m[4]))
+    log('p_m_fill: %s %s' % (m[1], m[4]))
     
 
 def p_error(t):
