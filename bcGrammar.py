@@ -34,7 +34,7 @@ def resize(b, l):
     lenB = len(b)
     for i in range(0, l):
         nuevo[i] = b[i % lenB]
-    return nuevo
+        return nuevo
 
 def oper(op, buffer_a, buffer_b):
     if len(buffer_a) < len(buffer_b):
@@ -111,7 +111,7 @@ def p_m_play(m):
     else:
         log('p_m_play: %s' % m[1])
     sonido = pygame.mixer.Sound(m[1])
-    canal = sonido.play()
+    canal  = sonido.play()
     canal.set_endevent(SONG_END)
     
     while True:
@@ -158,6 +158,17 @@ def p_m_loop(m):
     l = int(m[4])
     m[0] = tile(m[1], l)
     log('p_m_loop: %s %s' %(m[1], m[4]))
+
+def p_m_tune(m):
+    '''m : buffer '.' TUNE par'''
+    p = int(m[4])
+    l = int(len(m[1]) * ((2**(1.0/12))**-p))
+    m[0] = resample(m[1], l)
+    log('p_m_tune: %s %s' % (m[1], m[4]))
+
+#def p_m_fill(m):
+#    '''m : buffer '.' FILL par'''
+    
 
 def p_error(t):
     log("Error de sintaxis en: '%s'" % t.value)

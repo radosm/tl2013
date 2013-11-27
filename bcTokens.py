@@ -1,6 +1,7 @@
 import ply.lex as lex
 
-tokens   = ('UINT', 'FLOAT', 'PLAY', 'SIN', 'SIL', 'EXPAND', 'REDUCE', 'POST', 'LOOP')
+tokens   = ('UINT', 'FLOAT', 'PLAY', 'SIN', 'SIL',
+            'EXPAND', 'REDUCE', 'POST', 'LOOP', 'TUNE')
 literals = '{}().;,&+-*/'
 t_PLAY   = r'play'
 t_SIN    = r'sin'
@@ -9,6 +10,7 @@ t_EXPAND = r'expand'
 t_REDUCE = r'reduce'
 t_POST   = r'post'
 t_LOOP   = r'loop'
+t_TUNE   = r'tune'
 
 def t_FLOAT(t):
     r'-?\d*\.\d+'
@@ -31,8 +33,8 @@ def t_UINT(t):
 # Ignoramos espacios y tabs
 t_ignore = " \t"
 
-# Reconocemos el salto del linea solo para incrementar el contador de linea
-# pero no forma parte de nuestro tokens (porque no devolvemos nada en la funcion)
+# Reconocemos el salto del linea solo para incrementar el contador de linea pero 
+# no forma parte de nuestro tokens (porque no devolvemos nada en la funcion)
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
