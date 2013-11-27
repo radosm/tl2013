@@ -1,8 +1,7 @@
 import ply.lex as lex
 
 tokens = ('UINT', 'FLOAT', 'PLAY', 'SIN', 'SIL', 'EXPAND', 'REDUCE')
-#literals = '{}(),;+-*&/'
-literals = '{}().;,+-*/'
+literals = '{}().;,&+-*/'
 t_PLAY = r'play'
 t_SIN = r'sin'
 t_SIL = r'silence|sil'

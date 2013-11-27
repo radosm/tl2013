@@ -12,6 +12,7 @@ from debug import log
 
 precedence = (
     ('left', ';'),
+    ('left', '&'),
     ('left', '+', '-'),
     ('left', '*', '/'),
     ('right', 'UMINUS'), # UMINUS = Unary Minus
@@ -55,6 +56,11 @@ def p_buffer_concat(b):
     '''buffer : buffer ';' buffer'''
     b[0] = hstack((b[1], b[3]))
     log('p_buffer_concat %s;%s = %s' % (b[1], b[3], b[0]))
+
+def p_buffer_mezcla(b):
+    '''buffer : buffer '&' buffer'''
+    b[0] = oper(lambda x, y: (x + y) / 2, b[1], b[3])
+    log('p_buffer_mezcla: %s & %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_sum(b):
     '''buffer : buffer '+' buffer'''
