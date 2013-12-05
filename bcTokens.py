@@ -1,11 +1,13 @@
 import ply.lex as lex
 
 tokens   = ('UINT', 'FLOAT', 'PLAY', 'SIN', 'SIL', 'EXPAND', 
-            'REDUCE', 'POST', 'LOOP', 'TUNE', 'FILL')
+            'REDUCE', 'POST', 'LOOP', 'TUNE', 'FILL','NOI','LIN')
 literals = '{}().;,&+-*/'
 t_PLAY   = r'play'
 t_SIN    = r'sin'
 t_SIL    = r'silence|sil'
+t_NOI    = r'noise|noi'
+t_LIN    = r'linear|lin'
 t_EXPAND = r'expand'
 t_REDUCE = r'reduce'
 t_POST   = r'post'

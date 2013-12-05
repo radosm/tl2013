@@ -22,6 +22,15 @@ precedence = (
 # Diccionario de nombres
 names = {}
 
+beat=config.SAMPLING_RATE/12
+
+def sin(c, a):
+    buff = array(beat)
+    x = (c*2*pi)/beat
+    for i in range(0, beat):
+        buff[i] = a*sin(i*x)
+    return buff
+
 def resample(b, l):
     nuevo = array(range(0, l))
     lenB = len(b)
@@ -142,8 +151,12 @@ def p_m_reduce_expand(m):
 
 def p_g(g):
     '''g : SIN par2
+         | LIN par2
+         | NOI par
          | SIL'''
-    g[0] = array([333]) if g[1][:3] == 'sil' else array([444]) # reemplazar por sin (par1, par2)
+    ##g[0] = array([333]) if g[1][:3] == 'sil' else array([888]) # reemplazar por sin (par1, par2)
+    print "**sin "+str(g[2][0]) +" "+str(g[2][1])
+    ##g[0] = sin (g[2] , g[3])
     log('p_g: %s' % g[0])
 
 def p_par(p):
@@ -154,7 +167,7 @@ def p_par(p):
 
 def p_par2(p):
     '''par2 : '(' FLOAT ',' FLOAT ')' '''
-    p[0] = (p[2], p[4])
+    p[0] = array([p[2],p[4]])
     log('p_par2 (%s, %s)' % (p[2], p[4]))
 
 def p_m_post(m):
