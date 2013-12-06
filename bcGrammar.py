@@ -1,4 +1,5 @@
 import config
+import random
 import ply.yacc as yacc
 from bcTokens import *
 from numpy import *
@@ -40,6 +41,12 @@ def sil():
     buff = array(range(0, config.BEAT))
     for i in range(0, config.BEAT):
         buff[i] = 0
+    return buff 
+
+def noi(a):
+    buff = array(range(0, config.BEAT),dtype=float)
+    for i in range(0, config.BEAT):
+        buff[i]=float(a)*random.uniform(-1, 1)
     return buff 
 
 def resample(b, l):
@@ -163,7 +170,7 @@ def p_m_reduce_expand(m):
 def p_g(g):
     '''g : SIN par2
          | LIN par2
-         | NOI
+         | NOI par
          | SIL'''
     log('p_g: %s' % g[0])
     if g[1][:3]=='sin':
@@ -171,7 +178,7 @@ def p_g(g):
     if g[1][:3]=='lin':
 	g[0] = lin(g[2][0] , g[2][1])
     if g[1][:3]=='noi':
-	g[0] = array([678])
+	g[0] = noi(g[2])
     if g[1][:3]=='sil':
 	g[0] = sil()
 
@@ -192,7 +199,7 @@ def p_par2(p):
 def p_m_post(m):
     ''' m : buffer '.' POST'''
     m[0] = m[1]
-    print m[1]
+    ## print m[1]
     log('p_m_post: %s' % m[1])
 
 def p_m_loop(m):
