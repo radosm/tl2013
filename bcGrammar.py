@@ -31,7 +31,7 @@ def bcSin(c, a):
 
 def lin(a, b):
     buff = array(range(0, config.BEAT),dtype=float)
-    x = (b - a)/(config.BEAT-1)
+    x = float((b - a))/(config.BEAT-1)
     for i in range(0, config.BEAT):
         buff[i] = a+x*i
     return buff 
@@ -182,7 +182,10 @@ def p_par(p):
     log('p_par %s' % p[2])
 
 def p_par2(p):
-    '''par2 : '(' FLOAT ',' FLOAT ')' '''
+    '''par2 : '(' FLOAT ',' FLOAT ')' 
+            | '(' FLOAT ',' UINT ')' 
+            | '(' UINT ',' FLOAT ')' 
+            | '(' UINT ',' UINT ')' '''
     p[0] = array([p[2],p[4]])
     log('p_par2 (%s, %s)' % (p[2], p[4]))
 
