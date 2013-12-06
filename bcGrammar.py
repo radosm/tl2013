@@ -43,7 +43,7 @@ def sil():
         buff[i] = 0
     return buff 
 
-def noi(a):
+def noi(a=10):
     buff = array(range(0, config.BEAT),dtype=float)
     for i in range(0, config.BEAT):
         buff[i]=float(a)*random.uniform(-1, 1)
@@ -171,6 +171,7 @@ def p_g(g):
     '''g : SIN par2
          | LIN par2
          | NOI par
+         | NOI
          | SIL'''
     if g[1][:3]=='sin':
     	g[0] = bcSin(g[2][0] , g[2][1])
@@ -179,8 +180,12 @@ def p_g(g):
 	g[0] = lin(g[2][0] , g[2][1])
         log('p_g: lin(%s, %s)' % (g[2][0],g[2][1]))
     if g[1][:3]=='noi':
-	g[0] = noi(g[2])
-        log('p_g: noi(%s)' % g[2])
+	if len(g)==3:
+	    g[0] = noi(g[2])
+            log('p_g: noi(%s)' % g[2])
+        else:
+	    g[0] = noi()
+            log('p_g: noi')
     if g[1][:3]=='sil':
 	g[0] = sil()
         log('p_g: sil')
@@ -223,7 +228,6 @@ def p_m_fill(m):
     m[0] = fill(m[1], int(m[4]))
     log('p_m_fill: %s %s' % (m[1], m[4]))
     
-
 def p_error(t):
     log("Error de sintaxis en: '%s'" % t.value)
 
