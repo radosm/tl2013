@@ -29,11 +29,17 @@ def bcSin(c, a):
         buff[i] = a*sin(i*x)
     return buff
 
-def lin(a, b):   ### Hacer
+def lin(a, b):
     buff = array(range(0, config.BEAT),dtype=float)
     x = (b - a)/(config.BEAT-1)
     for i in range(0, config.BEAT):
         buff[i] = a+x*i
+    return buff 
+
+def sil():
+    buff = array(range(0, config.BEAT))
+    for i in range(0, config.BEAT):
+        buff[i] = 0
     return buff 
 
 def resample(b, l):
@@ -167,7 +173,7 @@ def p_g(g):
     if g[1][:3]=='noi':
 	g[0] = array([678])
     if g[1][:3]=='sil':
-	g[0] = array([876])
+	g[0] = sil()
 
 def p_par(p):
     '''par : '(' UINT ')'
