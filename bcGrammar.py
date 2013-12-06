@@ -23,14 +23,17 @@ precedence = (
 names = {}
 
 def bcSin(c, a):
-    buff = array(range(0, config.BEAT))
+    buff = array(range(0, config.BEAT),dtype=float)
     x = (c*2*pi)/config.BEAT
     for i in range(0, config.BEAT):
         buff[i] = a*sin(i*x)
     return buff
 
 def lin(a, b):   ### Hacer
-    buff = array(range(0, int(a)))
+    buff = array(range(0, config.BEAT),dtype=float)
+    x = (b - a)/(config.BEAT-1)
+    for i in range(0, config.BEAT):
+        buff[i] = a+x*i
     return buff 
 
 def resample(b, l):
