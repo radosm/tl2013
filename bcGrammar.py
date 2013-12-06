@@ -11,10 +11,10 @@ from debug import log
 # Reglas de parsing
 
 precedence = (
-    ('left', ';'),
-    ('left', '&'),
-    ('left', '+', '-'),
-    ('left', '*', '/'),
+    ('left', 'CON'),
+    ('left', 'MIX'),
+    ('left', 'SUM', 'SUB'),
+    ('left', 'MUL', 'DIV'),
     ('right', 'UMINUS'), # UMINUS = Unary Minus
     ('left', '.')
 )
@@ -44,7 +44,7 @@ def resize(b, l):
     lenB = len(b)
     for i in range(0, l):
         nuevo[i] = b[i % lenB]
-        return nuevo
+    return nuevo
 
 def fill(b, n):
     l = config.BEAT * n
@@ -73,32 +73,32 @@ def p_buffer_llaves(b):
     b[0] = b[2]
 
 def p_buffer_concat(b):
-    '''buffer : buffer ';' buffer'''
+    '''buffer : buffer CON buffer'''
     b[0] = hstack((b[1], b[3]))
     log('p_buffer_concat %s;%s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_mezcla(b):
-    '''buffer : buffer '&' buffer'''
+    '''buffer : buffer MIX buffer'''
     b[0] = oper(lambda x, y: (x + y) / 2, b[1], b[3])
     log('p_buffer_mezcla: %s & %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_sum(b):
-    '''buffer : buffer '+' buffer'''
+    '''buffer : buffer SUM buffer'''
     b[0] = oper(lambda x, y: x + y, b[1], b[3])
     log('p_buffer_sum: %s + %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_res(b):
-    '''buffer : buffer '-' buffer'''
+    '''buffer : buffer SUB buffer'''
     b[0] = oper(lambda x, y: x - y, b[1], b[3])
     log('p_buffer_res: %s - %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_mul(b):
-    '''buffer : buffer '*' buffer'''
+    '''buffer : buffer MUL buffer'''
     b[0] = oper(lambda x, y: x * y, b[1], b[3])
     log('p_buffer_mul: %s * %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_div(b):
-    '''buffer : buffer '/' buffer'''
+    '''buffer : buffer DIV buffer'''
     b[0] = oper(lambda x, y: x / y, b[1], b[3])
     log('p_buffer_div: %s / %s = %s' % (b[1], b[3], b[0]))
 
@@ -151,9 +151,11 @@ def p_m_reduce_expand(m):
     log('p_m_%s: resample(%s, %s) = %s' % (m[3], m[1], l, m[0]))
 
 def p_g(g):
-    '''g : SIN par2
+    '''g : SIN par
+         | SIN par2
          | LIN par2
          | NOI par
+         | NOI
          | SIL'''
     ##g[0] = array([333]) if g[1][:3] == 'sil' else array([888]) # reemplazar por sin (par1, par2)
     print "**sin "+str(g[2][0]) +" "+str(g[2][1])

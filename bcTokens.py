@@ -1,8 +1,14 @@
 import ply.lex as lex
 
-tokens   = ('UINT', 'FLOAT', 'PLAY', 'SIN', 'SIL', 'EXPAND', 
-            'REDUCE', 'POST', 'LOOP', 'TUNE', 'FILL','NOI','LIN')
-literals = '{}().;,&+-*/'
+literals = '{}().,'
+
+tokens = (
+    'UINT', 'FLOAT', # Tipos basicos
+    'SIN', 'LIN', 'SIL', 'NOI', # Generadores
+    'CON', 'MIX', 'SUM', 'SUB', 'MUL', 'DIV', # Operadores
+    'PLAY', 'POST', 'LOOP', 'TUNE', 'FILL', 'REDUCE', 'EXPAND' # Metodos
+)
+
 t_PLAY   = r'play'
 t_SIN    = r'sin'
 t_SIL    = r'silence|sil'
@@ -14,6 +20,12 @@ t_POST   = r'post'
 t_LOOP   = r'loop'
 t_TUNE   = r'tune'
 t_FILL   = r'fill'
+t_CON    = r'con|;'
+t_MIX    = r'mix|&'
+t_SUM    = r'sum|\+'
+t_SUB    = r'sub|-'
+t_MUL    = r'mul|\*'
+t_DIV    = r'div|/'
 
 def t_FLOAT(t):
     r'-?\d*\.\d+'
@@ -36,7 +48,11 @@ def t_UINT(t):
 # Ignoramos espacios y tabs
 t_ignore = " \t"
 
-# Reconocemos el salto del linea solo para incrementar el contador de linea pero 
+# Ignoramos los comentarios
+def t_nocomments(t):
+    r'//[^\n]+'
+
+# Reconocemos el salto del linea solo para incrementar el contador de linea pero
 # no forma parte de nuestro tokens (porque no devolvemos nada en la funcion)
 def t_newline(t):
     r'\n+'
@@ -47,4 +63,4 @@ def t_error(t):
     t.lexer.skip(1)
 
 # Construimos el lexer
-lex.lex()
+lexer = lex.lex()
