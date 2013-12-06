@@ -172,15 +172,18 @@ def p_g(g):
          | LIN par2
          | NOI par
          | SIL'''
-    log('p_g: %s' % g[0])
     if g[1][:3]=='sin':
     	g[0] = bcSin(g[2][0] , g[2][1])
+        log('p_g: sin(%s, %s)' % (g[2][0],g[2][1]))
     if g[1][:3]=='lin':
 	g[0] = lin(g[2][0] , g[2][1])
+        log('p_g: lin(%s, %s)' % (g[2][0],g[2][1]))
     if g[1][:3]=='noi':
 	g[0] = noi(g[2])
+        log('p_g: noi(%s)' % g[2])
     if g[1][:3]=='sil':
 	g[0] = sil()
+        log('p_g: sil')
 
 def p_par(p):
     '''par : '(' UINT ')'
