@@ -24,13 +24,16 @@ names = {}
 
 beat=config.SAMPLING_RATE/12
 
-def seno(c, a):
-    print beat
+def bcSin(c, a):
     buff = array(range(0, beat))
     x = (c*2*pi)/beat
     for i in range(0, beat):
         buff[i] = a*sin(i*x)
     return buff
+
+def lin(a, b):   ### Hacer
+    buff = array(range(0, int(a)))
+    return buff 
 
 def resample(b, l):
     nuevo = array(range(0, l))
@@ -151,16 +154,19 @@ def p_m_reduce_expand(m):
     log('p_m_%s: resample(%s, %s) = %s' % (m[3], m[1], l, m[0]))
 
 def p_g(g):
-    '''g : SIN par
-         | SIN par2
+    '''g : SIN par2
          | LIN par2
-         | NOI par
          | NOI
          | SIL'''
-    ##g[0] = array([333]) if g[1][:3] == 'sil' else array([888]) # reemplazar por sin (par1, par2)
-    print "**sin "+str(g[2][0]) +" "+str(g[2][1])
-    g[0] = seno (g[2][0] , g[2][1])
     log('p_g: %s' % g[0])
+    if g[1][:3]=='sin':
+    	g[0] = bcSin(g[2][0] , g[2][1])
+    if g[1][:3]=='lin':
+	g[0] = lin(g[2][0] , g[2][1])
+    if g[1][:3]=='noi':
+	g[0] = array([678])
+    if g[1][:3]=='sil':
+	g[0] = array([876])
 
 def p_par(p):
     '''par : '(' UINT ')'
