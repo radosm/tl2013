@@ -22,12 +22,10 @@ precedence = (
 # Diccionario de nombres
 names = {}
 
-beat=config.SAMPLING_RATE/12
-
 def bcSin(c, a):
-    buff = array(range(0, beat))
-    x = (c*2*pi)/beat
-    for i in range(0, beat):
+    buff = array(range(0, config.BEAT))
+    x = (c*2*pi)/config.BEAT
+    for i in range(0, config.BEAT):
         buff[i] = a*sin(i*x)
     return buff
 
