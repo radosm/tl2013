@@ -24,8 +24,9 @@ names = {}
 
 beat=config.SAMPLING_RATE/12
 
-def sin(c, a):
-    buff = array(beat)
+def seno(c, a):
+    print beat
+    buff = array(range(0, beat))
     x = (c*2*pi)/beat
     for i in range(0, beat):
         buff[i] = a*sin(i*x)
@@ -156,7 +157,7 @@ def p_g(g):
          | SIL'''
     ##g[0] = array([333]) if g[1][:3] == 'sil' else array([888]) # reemplazar por sin (par1, par2)
     print "**sin "+str(g[2][0]) +" "+str(g[2][1])
-    ##g[0] = sin (g[2] , g[3])
+    g[0] = seno (g[2][0] , g[2][1])
     log('p_g: %s' % g[0])
 
 def p_par(p):
