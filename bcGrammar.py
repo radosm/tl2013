@@ -5,7 +5,7 @@ from bcTokens import *
 from numpy import *
 import pygame
 pygame.init()
-pygame.mixer.init(frequency=config.SAMPLING_RATE, size=config.SAMPLE_SIZE, channels=1, buffer=4096)
+pygame.mixer.init(frequency = config.SAMPLING_RATE, size = config.SAMPLE_SIZE, channels = 1, buffer = 4096)
 SONG_END = pygame.USEREVENT + 1
 from debug import log
 
@@ -16,25 +16,27 @@ precedence = (
     ('left', 'MIX'),
     ('left', 'SUM', 'SUB'),
     ('left', 'MUL', 'DIV'),
-    ('right', 'UMINUS'), # UMINUS = Unary Minus
     ('left', '.')
 )
 
 # Diccionario de nombres
 names = {}
 
-def bcSin(c, a = pow(2,15)):
-    buff = array(range(0, config.BEAT), dtype=int)
-    x = (c*2*pi)/config.BEAT
+def bcSin(c, a = 1.0):
+    a = a * pow(2, 15)
+    buff = array(range(0, config.BEAT), dtype = int)
+    x = (c * 2 * pi) / config.BEAT
     for i in range(0, config.BEAT):
-        buff[i] = int(a*sin(i*x))
+        buff[i] = int(a * sin(i * x))
     return buff
 
 def lin(a, b):
-    buff = array(range(0, config.BEAT), dtype=int)
-    x = float((b - a))/(config.BEAT-1)
+    a = a * pow(2, 15)
+    b = b * pow(2, 15)
+    buff = array(range(0, config.BEAT), dtype = int)
+    x = float((b - a)) / (config.BEAT-1)
     for i in range(0, config.BEAT):
-        buff[i] = int(a+x*i)
+        buff[i] = int(a + x * i)
     return buff
 
 def sil():
@@ -43,8 +45,9 @@ def sil():
         buff[i] = 0
     return buff
 
-def noi(a = pow(2,15)):
-    buff = array(range(0, config.BEAT), dtype=int)
+def noi(a = 1.0):
+    a = a * pow(2,15)
+    buff = array(range(0, config.BEAT), dtype = int)
     for i in range(0, config.BEAT):
         buff[i] = int(float(a) * random.uniform(-1, 1))
     return buff
@@ -53,7 +56,7 @@ def resample(b, l):
     nuevo = array(range(0, l))
     lenB = len(b)
     for i in range(0, l):
-        nuevo[i] = b[i*lenB/l]
+        nuevo[i] = b[i * lenB / l]
     return nuevo
 
 def resize(b, l):
@@ -119,16 +122,10 @@ def p_buffer_div(b):
     b[0] = oper(lambda x, y: x / y, b[1], b[3])
     log('p_buffer_div: %s / %s = %s' % (b[1], b[3], b[0]))
 
-def p_buffer_signed_int(b):
-    '''buffer : SUB UINT %prec UMINUS '''
-    b[0] = -b[2]
-    log('p_buffer_uint: -%s = %s' % (b[2], b[0]))
-
-def p_buffer_unsigned_int(b):
-    '''buffer : INT
-              | UINT '''
-    b[0] = array([b[1]])
-    log('p_buffer_int: %s' % b[1])
+def p_buffer_num(b):
+    '''buffer : num '''
+    b[0] = array([b[1] * pow(2, 15)])
+    log('p_buffer_num: %s' % b[1])
 
 def p_buffer_m(b):
     'buffer : m'
@@ -140,18 +137,27 @@ def p_buffer_g(b):
     b[0] = b[1]
     log('p_buffer_g: %s' % b[1])
 
+def fixRanges(buf):
+    for i in range(0, len(buf)):
+        if buf[i] < -pow(2, 15):
+            buf[i] = -pow(2, 15)
+        elif buf[i] >= pow(2, 15):
+            buf[i] = pow(2, 15) - 1
+    return buf
+
 def p_m_play(m):
     '''m : buffer '.' PLAY par
          | buffer '.' PLAY'''
-    m[0] = m[1]
+    buf = fixRanges(m[1])
+    m[0] = buf
     if len(m) == 5:
         repeat = m[4]
-        log('p_m_play: %s (%s)' % (m[1], m[4]))
+        log('p_m_play: %s (%s)' % (buf, m[4]))
     else:
         repeat = 1
-        log('p_m_play: %s' % m[1])
+        log('p_m_play: %s' % buf)
     for i in range(0, repeat):
-        sonido = pygame.mixer.Sound(m[1])
+        sonido = pygame.mixer.Sound(buf)
         canal = sonido.play()
         canal.set_endevent(SONG_END)
         
@@ -205,9 +211,10 @@ def p_par(p):
     log('p_par %s' % p[2])
 
 def p_num(p):
-    '''num : FLOAT
-               | UINT
-               | INT '''
+    '''num : UFLOAT
+           | FLOAT
+           | UINT
+           | INT '''
     p[0] = p[1]
 
 def p_par2(p):
@@ -218,7 +225,7 @@ def p_par2(p):
 def p_m_post(m):
     ''' m : buffer '.' POST'''
     m[0] = m[1]
-    ## print m[1]
+    print m[1]
     log('p_m_post: %s' % m[1])
 
 def p_m_loop(m):
