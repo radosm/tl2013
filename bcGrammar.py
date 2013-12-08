@@ -6,7 +6,7 @@ from numpy import *
 import pygame
 pygame.init()
 pygame.mixer.init(frequency = config.SAMPLING_RATE, size = config.SAMPLE_SIZE, channels = 1, buffer = 4096)
-SONG_END = pygame.USEREVENT + 1
+FIN_PLAY = pygame.USEREVENT + 1
 from debug import log
 
 # Reglas de parsing
@@ -23,44 +23,40 @@ precedence = (
 names = {}
 
 def bcSin(c, a = 1.0):
-    a = a * pow(2, 15)
-    buff = array(range(0, config.BEAT))
+    buff = array(range(0, config.BEAT), dtype = float)
     x = (c * 2 * pi) / config.BEAT
     for i in range(0, config.BEAT):
-        buff[i] = int(a * sin(i * x))
+        buff[i] = a * sin(i * x)
     return buff
 
 def lin(a, b):
-    a = a * pow(2, 15)
-    b = b * pow(2, 15)
-    buff = array(range(0, config.BEAT))
+    buff = array(range(0, config.BEAT), dtype = float)
     x = float((b - a)) / (config.BEAT-1)
     for i in range(0, config.BEAT):
-        buff[i] = int(a + x * i)
+        buff[i] = a + x * i
     return buff
 
 def sil():
-    buff = array(range(0, config.BEAT))
+    buff = array(range(0, config.BEAT), dtype = float)
     for i in range(0, config.BEAT):
         buff[i] = 0
     return buff
 
 def noi(a = 1.0):
-    a = a * pow(2,15)
-    buff = array(range(0, config.BEAT))
+    buff = array(range(0, config.BEAT), dtype = float)
     for i in range(0, config.BEAT):
-        buff[i] = int(float(a) * random.uniform(-1, 1))
+        buff[i] = float(a) * random.uniform(-1, 1)
     return buff
 
 def resample(b, l):
-    nuevo = array(range(0, l))
+    nuevo = array(range(0, l), dtype = float)
     lenB = len(b)
     for i in range(0, l):
         nuevo[i] = b[i * lenB / l]
     return nuevo
 
 def resize(b, l):
-    nuevo = array(range(0, l))
+    nuevo = array(range(0, l), dtype = float)
     lenB = len(b)
     for i in range(0, l):
         nuevo[i] = b[i % lenB]
@@ -68,7 +64,7 @@ def resize(b, l):
 
 def fill(b, n):
     l = config.BEAT * n
-    nuevo = array(range(0, l))
+    nuevo = array(range(0, l), dtype = float)
     for i in range(0, l):
         if i < len(b):
             nuevo[i] = b[i]
@@ -83,7 +79,7 @@ def oper(op, buffer_a, buffer_b):
     else:
         a = buffer_a
         b = resize(buffer_b, len(buffer_a))
-    nuevo = array(range(0, len(a)))
+    nuevo = array(range(0, len(a)), dtype = float)
     for i in range(0, len(a)):
         nuevo[i] = op(a[i], b[i])
     return nuevo
@@ -124,7 +120,7 @@ def p_buffer_div(b):
 
 def p_buffer_num(b):
     '''buffer : num '''
-    b[0] = array([b[1] * pow(2, 15)])
+    b[0] = array([b[1]], dtype = float)
     log('p_buffer_num: %s' % b[1])
 
 def p_buffer_m(b):
@@ -139,6 +135,7 @@ def p_buffer_g(b):
 
 def fixRanges(buf):
     for i in range(0, len(buf)):
+        buf[i] *= pow(2, 15)
         if buf[i] < -pow(2, 15):
             buf[i] = -pow(2, 15)
         elif buf[i] >= pow(2, 15):
@@ -149,7 +146,6 @@ def p_m_play(m):
     '''m : buffer '.' PLAY par
          | buffer '.' PLAY'''
     buf = fixRanges(m[1])
-    m[0] = buf
     if len(m) == 5:
         repeat = m[4]
         log('p_m_play: %s (%s)' % (buf, m[4]))
@@ -159,13 +155,14 @@ def p_m_play(m):
     for i in range(0, repeat):
         sonido = pygame.mixer.Sound(buf)
         canal = sonido.play()
-        canal.set_endevent(SONG_END)
+        canal.set_endevent(FIN_PLAY)
         
-        finished = False
-        while not finished:
+        termino = False
+        while not termino:
             for event in pygame.event.get():
-                if event.type == SONG_END:
-                    finished = True
+                if event.type == FIN_PLAY:
+                    termino = True
+    m[0] = m[1]
 
 def p_m_reduce_expand(m):
     '''m : buffer '.' REDUCE par
@@ -219,7 +216,7 @@ def p_num(p):
 
 def p_par2(p):
     '''par2 : '(' num ',' num ')' '''
-    p[0] = array([p[2],p[4]])
+    p[0] = array([p[2],p[4]], dtype = float)
     log('p_par2 (%s, %s)' % (p[2], p[4]))
 
 def p_m_post(m):
@@ -227,7 +224,7 @@ def p_m_post(m):
     m[0] = m[1]
     print(' '.join(
         map(
-            lambda x: str(round(float(x) / pow(2, 15), 2)),
+            lambda x: str(round(x, 2)),
             m[1])
         )
     )
