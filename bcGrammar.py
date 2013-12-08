@@ -199,18 +199,19 @@ def p_g(g):
         log('p_g: sil')
 
 def p_par(p):
-    '''par : '(' numerito ')' '''
-    p[0] = p[2]
+    '''par : '(' num ')'
+           | '(' SUM num ')' '''
+    p[0] = p[2] if len(p) == 4 else p[3]
     log('p_par %s' % p[2])
 
-def p_numerito(p):
-    '''numerito : FLOAT
+def p_num(p):
+    '''num : FLOAT
                | UINT
                | INT '''
     p[0] = p[1]
 
 def p_par2(p):
-    '''par2 : '(' numerito ',' numerito ')' '''
+    '''par2 : '(' num ',' num ')' '''
     p[0] = array([p[2],p[4]])
     log('p_par2 (%s, %s)' % (p[2], p[4]))
 
