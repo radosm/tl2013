@@ -1,5 +1,5 @@
 # Configuracion del sonido
-SAMPLING_RATE = 9600
+SAMPLING_RATE = 22050
 BEAT = SAMPLING_RATE / 12
 SAMPLE_SIZE = -16
 
