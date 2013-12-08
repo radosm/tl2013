@@ -13,7 +13,13 @@ def run(testCallback):
         mostrarUso()
     elif os.path.isfile(argv[1]):
         archivo = open(argv[1], 'r')
-        testCallback(archivo.read())
+        entrada = archivo.read()
+        print '----------------------------------------------------'
+        print '                  Cadena a procesar'
+        print '----------------------------------------------------'
+        print entrada
+        print '----------------------------------------------------'
+        testCallback(entrada)
         archivo.close()
     else:
         print 'El archivo %s no existe' % argv[1]

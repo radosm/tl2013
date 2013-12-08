@@ -24,7 +24,7 @@ names = {}
 
 def bcSin(c, a = 1.0):
     a = a * pow(2, 15)
-    buff = array(range(0, config.BEAT), dtype = int)
+    buff = array(range(0, config.BEAT))
     x = (c * 2 * pi) / config.BEAT
     for i in range(0, config.BEAT):
         buff[i] = int(a * sin(i * x))
@@ -33,7 +33,7 @@ def bcSin(c, a = 1.0):
 def lin(a, b):
     a = a * pow(2, 15)
     b = b * pow(2, 15)
-    buff = array(range(0, config.BEAT), dtype = int)
+    buff = array(range(0, config.BEAT))
     x = float((b - a)) / (config.BEAT-1)
     for i in range(0, config.BEAT):
         buff[i] = int(a + x * i)
@@ -47,7 +47,7 @@ def sil():
 
 def noi(a = 1.0):
     a = a * pow(2,15)
-    buff = array(range(0, config.BEAT), dtype = int)
+    buff = array(range(0, config.BEAT))
     for i in range(0, config.BEAT):
         buff[i] = int(float(a) * random.uniform(-1, 1))
     return buff
@@ -187,14 +187,14 @@ def p_g(g):
          | NOI par
          | NOI
          | SIL'''
-    if g[1][:3]=='sin':
+    if g[1][:3] == 'sin':
         g[0] = bcSin(g[2]) if type(g[2]) is int else bcSin(g[2][0] , g[2][1])
         log('p_g: sin(%s)' % (g[2]))
-    if g[1][:3]=='lin':
+    if g[1][:3] == 'lin':
         g[0] = lin(g[2][0] , g[2][1])
         log('p_g: lin(%s, %s)' % (g[2][0],g[2][1]))
-    if g[1][:3]=='noi':
-        if len(g)==3:
+    if g[1][:3] == 'noi':
+        if len(g) == 3:
             g[0] = noi(g[2])
             log('p_g: noi(%s)' % g[2])
         else:
@@ -225,7 +225,12 @@ def p_par2(p):
 def p_m_post(m):
     ''' m : buffer '.' POST'''
     m[0] = m[1]
-    print(' '.join(map(lambda x: str(x), m[1])))
+    print(' '.join(
+        map(
+            lambda x: str(round(float(x) / pow(2, 15), 2)),
+            m[1])
+        )
+    )
     log('p_m_post: %s' % m[1])
 
 def p_m_loop(m):
