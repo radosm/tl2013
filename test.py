@@ -6,7 +6,7 @@ ejemplos = glob('examples/*buf')
 
 def mostrarUso():
     print 'Uso: python %s <archivo>' % argv[0]
-    print 'Ejemplos disponibles: %s' % ejemplos
+    print 'Ejemplos disponibles:\n\t%s' % '\n\t'.join(ejemplos)
 
 def run(testCallback):
     if len(argv) != 2:
