@@ -3,7 +3,7 @@ import ply.lex as lex
 literals = '{}().,'
 
 tokens = (
-    'UINT', 'FLOAT', # Tipos basicos
+    'UINT', 'INT', 'FLOAT', # Tipos basicos
     'SIN', 'LIN', 'SIL', 'NOI', # Generadores
     'CON', 'MIX', 'SUM', 'SUB', 'MUL', 'DIV', # Operadores
     'PLAY', 'POST', 'LOOP', 'TUNE', 'FILL', 'REDUCE', 'EXPAND' # Metodos
@@ -38,6 +38,15 @@ def t_FLOAT(t):
 
 def t_UINT(t):
     r'\d+'
+    try:
+        t.value = int(t.value)
+    except ValueError:
+        print "Valor invalido: %s" % t.value
+        t.value = 0
+    return t
+
+def t_INT(t):
+    r'-?\d+'
     try:
         t.value = int(t.value)
     except ValueError:

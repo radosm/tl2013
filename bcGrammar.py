@@ -23,31 +23,31 @@ precedence = (
 # Diccionario de nombres
 names = {}
 
-def bcSin(c, a):
-    buff = array(range(0, config.BEAT),dtype=float)
+def bcSin(c, a = pow(2,15)):
+    buff = array(range(0, config.BEAT), dtype=int)
     x = (c*2*pi)/config.BEAT
     for i in range(0, config.BEAT):
-        buff[i] = a*sin(i*x)
+        buff[i] = int(a*sin(i*x))
     return buff
 
 def lin(a, b):
-    buff = array(range(0, config.BEAT),dtype=float)
+    buff = array(range(0, config.BEAT), dtype=int)
     x = float((b - a))/(config.BEAT-1)
     for i in range(0, config.BEAT):
-        buff[i] = a+x*i
-    return buff 
+        buff[i] = int(a+x*i)
+    return buff
 
 def sil():
     buff = array(range(0, config.BEAT))
     for i in range(0, config.BEAT):
         buff[i] = 0
-    return buff 
+    return buff
 
-def noi(a=10):
-    buff = array(range(0, config.BEAT),dtype=float)
+def noi(a = pow(2,15)):
+    buff = array(range(0, config.BEAT), dtype=int)
     for i in range(0, config.BEAT):
-        buff[i]=float(a)*random.uniform(-1, 1)
-    return buff 
+        buff[i] = int(float(a) * random.uniform(-1, 1))
+    return buff
 
 def resample(b, l):
     nuevo = array(range(0, l))
@@ -120,12 +120,13 @@ def p_buffer_div(b):
     log('p_buffer_div: %s / %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_signed_int(b):
-    '''buffer : '-' UINT %prec UMINUS '''
+    '''buffer : SUB UINT %prec UMINUS '''
     b[0] = -b[2]
     log('p_buffer_uint: -%s = %s' % (b[2], b[0]))
 
 def p_buffer_unsigned_int(b):
-    'buffer : UINT'
+    '''buffer : INT
+              | UINT '''
     b[0] = array([b[1]])
     log('p_buffer_int: %s' % b[1])
 
@@ -144,22 +145,28 @@ def p_m_play(m):
          | buffer '.' PLAY'''
     m[0] = m[1]
     if len(m) == 5:
+        repeat = m[4]
         log('p_m_play: %s (%s)' % (m[1], m[4]))
     else:
+        repeat = 1
         log('p_m_play: %s' % m[1])
-    sonido = pygame.mixer.Sound(m[1])
-    canal  = sonido.play()
-    canal.set_endevent(SONG_END)
-    
-    while True:
-        for event in pygame.event.get():
-            if event.type == SONG_END:
-                return
+    for i in range(0, repeat):
+        sonido = pygame.mixer.Sound(m[1])
+        canal = sonido.play()
+        canal.set_endevent(SONG_END)
+        
+        finished = False
+        while not finished:
+            for event in pygame.event.get():
+                if event.type == SONG_END:
+                    finished = True
 
 def p_m_reduce_expand(m):
     '''m : buffer '.' REDUCE par
-         | buffer '.' EXPAND par '''
-    l = config.BEAT * int(m[4])
+         | buffer '.' REDUCE
+         | buffer '.' EXPAND par
+         | buffer '.' EXPAND'''
+    l = config.BEAT * int(m[4]) if len(m) == 5 else config.BEAT
     if ((m[3] == 'reduce') and (l < len(m[1]))) or \
        ((m[3] == 'expand') and (l > len(m[1]))):
         m[0] = resample(m[1], l)
@@ -169,38 +176,41 @@ def p_m_reduce_expand(m):
 
 def p_g(g):
     '''g : SIN par2
+         | SIN par
          | LIN par2
          | NOI par
          | NOI
          | SIL'''
     if g[1][:3]=='sin':
-    	g[0] = bcSin(g[2][0] , g[2][1])
-        log('p_g: sin(%s, %s)' % (g[2][0],g[2][1]))
+        g[0] = bcSin(g[2]) if type(g[2]) is int else bcSin(g[2][0] , g[2][1])
+        log('p_g: sin(%s)' % (g[2]))
     if g[1][:3]=='lin':
-	g[0] = lin(g[2][0] , g[2][1])
+        g[0] = lin(g[2][0] , g[2][1])
         log('p_g: lin(%s, %s)' % (g[2][0],g[2][1]))
     if g[1][:3]=='noi':
-	if len(g)==3:
-	    g[0] = noi(g[2])
+        if len(g)==3:
+            g[0] = noi(g[2])
             log('p_g: noi(%s)' % g[2])
         else:
-	    g[0] = noi()
+            g[0] = noi()
             log('p_g: noi')
     if g[1][:3]=='sil':
-	g[0] = sil()
+        g[0] = sil()
         log('p_g: sil')
 
 def p_par(p):
-    '''par : '(' UINT ')'
-           | '(' FLOAT ')' '''
+    '''par : '(' numerito ')' '''
     p[0] = p[2]
     log('p_par %s' % p[2])
 
+def p_numerito(p):
+    '''numerito : FLOAT
+               | UINT
+               | INT '''
+    p[0] = p[1]
+
 def p_par2(p):
-    '''par2 : '(' FLOAT ',' FLOAT ')' 
-            | '(' FLOAT ',' UINT ')' 
-            | '(' UINT ',' FLOAT ')' 
-            | '(' UINT ',' UINT ')' '''
+    '''par2 : '(' numerito ',' numerito ')' '''
     p[0] = array([p[2],p[4]])
     log('p_par2 (%s, %s)' % (p[2], p[4]))
 
@@ -213,7 +223,7 @@ def p_m_post(m):
 def p_m_loop(m):
     '''m : buffer '.' LOOP par'''
     l = int(m[4])
-    m[0] = tile(m[1], l)
+    m[0] = resize(m[1], len(m[1]) * l)
     log('p_m_loop: %s %s' %(m[1], m[4]))
 
 def p_m_tune(m):
