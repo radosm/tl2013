@@ -225,7 +225,7 @@ def p_par2(p):
 def p_m_post(m):
     ''' m : buffer '.' POST'''
     m[0] = m[1]
-    print m[1]
+    print(' '.join(map(lambda x: str(x), m[1])))
     log('p_m_post: %s' % m[1])
 
 def p_m_loop(m):

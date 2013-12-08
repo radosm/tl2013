@@ -8,18 +8,14 @@
 import config
 from debug import log
 from bcGrammar import *
+import test
 
-log('Generando la entrada')
-#valores = range(8,15)
-#entrada = ';'.join(map(lambda x: str(x), valores)) + '.play'
+def testCallback(data):
+    log('Parseando la entrada')
+    yacc.parse(data, debug = config.DEBUG == config.DEBUG_FULL)
+    log('Fin')
 
-entrada  = 'sin(2.1,1.8).play;silence.play(3)'
-#entrada = '{2;3;4;8}*{1;2;3};{{4;8;6}/2};{2;3}&{6;4}.play'
-#entrada = '{2;3;4;8}.loop(3).post'
-entrada  =  '{1;2;3;4;5}.fill(1)'
+test.run(testCallback)
 
-log('Haciendo el parsing')
-resultado = yacc.parse(entrada, debug = config.DEBUG == config.DEBUG_FULL)
-log('Fin')
 
 
