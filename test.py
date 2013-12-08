@@ -2,7 +2,7 @@ from sys import argv
 from glob import glob
 import os.path
 
-ejemplos = glob('examples/*buf')
+ejemplos = glob('ejemplos/*/*buf')
 
 def mostrarUso():
     print 'Uso: python %s <archivo>' % argv[0]
