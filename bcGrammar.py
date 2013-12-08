@@ -208,9 +208,7 @@ def p_par(p):
     log('p_par %s' % p[2])
 
 def p_num(p):
-    '''num : UFLOAT
-           | FLOAT
-           | UINT
+    '''num : FLOAT
            | INT '''
     p[0] = p[1]
 
