@@ -23,6 +23,12 @@ precedence = (
 names = {}
 
 def bcSin(c, a = 1.0):
+
+    if (a<=0 or a>1):
+        raise Exception('SIN: valores fuera de rango para amplitud');
+    if (c<0 or c!=int(c)):
+        raise Exception('SIN: valores fuera de rango para ciclos');
+
     buff = array(range(0, config.BEAT), dtype = float)
     x = (c * 2 * pi) / config.BEAT
     for i in range(0, config.BEAT):
@@ -30,6 +36,10 @@ def bcSin(c, a = 1.0):
     return buff
 
 def lin(a, b):
+
+    if (a<-1 or a>1 or b<-1 or b>1):
+        raise Exception('LIN: valores fuera de rango');
+
     buff = array(range(0, config.BEAT), dtype = float)
     x = float((b - a)) / (config.BEAT-1)
     for i in range(0, config.BEAT):
@@ -43,12 +53,20 @@ def sil():
     return buff
 
 def noi(a = 1.0):
+
+    if (a<=0 or a>1):
+        raise Exception('NOI: valores fuera de rango para amplitud');
+
     buff = array(range(0, config.BEAT), dtype = float)
     for i in range(0, config.BEAT):
         buff[i] = a * random.uniform(-1, 1)
     return buff
 
 def resample(b, l):
+
+    if (l<0 or l!=int(l)):
+        raise Exception('RESAMPLE: valores fuera de rango para nueva longitud');
+    
     nuevo = array(range(0, l), dtype = float)
     lenB = len(b)
     for i in range(0, l):
@@ -56,6 +74,10 @@ def resample(b, l):
     return nuevo
 
 def resize(b, l):
+
+    if (l<0 or l!=int(l)):
+        raise Exception('RESIZE: valores fuera de rango para nueva longitud');
+    
     nuevo = array(range(0, l), dtype = float)
     lenB = len(b)
     for i in range(0, l):
@@ -120,16 +142,28 @@ def p_buffer_div(b):
 
 def p_buffer_masmenos(b):
     '''buffer : num snum'''
+
+    if b[1]<-1 or b[1]>1 or b[2]<-1 or b[2]>1:
+        raise Exception('Valores de buffer deben estar en [-1,1]')
+
     b[0] = array([b[1] + b[2]], dtype = float)
     log('p_buffer_masmenos: %s %s = %s' % (b[1], b[2], b[0]))
 
 def p_buffer_snum(b):
     '''buffer : buffer snum'''
+
+    if b[2]<-1 or b[2]>1:
+        raise Exception('Valores de buffer deben estar en [-1,1]')
+
     b[0] = oper(lambda x, y: x + y, b[1], array([b[2]]))
     log('p_buffer_snum: %s + %s = %s' % (b[1], b[2], b[0]))
 
 def p_buffer_num(b):
     '''buffer : num '''
+
+    if b[1]<-1 or b[1]>1:
+        raise Exception('Valores de buffer deben estar en [-1,1]')
+
     b[0] = array([b[1]], dtype = float)
     log('p_buffer_num: %s' % b[1])
 
