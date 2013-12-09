@@ -1,0 +1,10 @@
+noise(.1).play(10);
+noise(.2).play(10);
+noise(.3).play(10);
+noise(.4).play(10);
+noise(.5).play(10);
+noise(.6).play(10);
+noise(.7).play(10);
+noise(.8).play(10);
+noise(.9).play(10);
+noise(1).play(10)

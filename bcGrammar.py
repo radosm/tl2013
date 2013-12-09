@@ -45,7 +45,7 @@ def sil():
 def noi(a = 1.0):
     buff = array(range(0, config.BEAT), dtype = float)
     for i in range(0, config.BEAT):
-        buff[i] = float(a) * random.uniform(-1, 1)
+        buff[i] = a * random.uniform(-1, 1)
     return buff
 
 def resample(b, l):
