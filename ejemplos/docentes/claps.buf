@@ -1,1 +1,0 @@
-{ noise ; sin(1) ; noise ; noise.loop(3) * lin(1.0, 0.25) ; noise.loop(6) * lin(0.25, 0.0) }.reduce.play
