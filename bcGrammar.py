@@ -251,8 +251,8 @@ def p_m_post(m):
 
 def p_m_loop(m):
     '''m : buffer '.' LOOP par'''
-    l = int(m[4])
-    m[0] = resize(m[1], len(m[1]) * l)
+    l = m[4]
+    m[0] = resize(m[1], int(len(m[1]) * l))
     log('p_m_loop: %s %s' %(m[1], m[4]))
 
 def p_m_tune(m):
