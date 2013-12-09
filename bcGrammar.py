@@ -113,6 +113,11 @@ def p_buffer_masmenos(b):
     b[0] = b[1] + b[2]
     log('p_buffer_masmenos: %s %s = %s' % (b[1], b[2], b[0]))
 
+def p_buffer_snum(b):
+    '''buffer : buffer snum'''
+    b[0] = oper(lambda x, y: x + y, b[1], array([b[2]]))
+    log('p_buffer_sum: %s + %s = %s' % (b[1], b[2], b[0]))
+
 def p_buffer_mul(b):
     '''buffer : buffer MUL buffer'''
     b[0] = oper(lambda x, y: x * y, b[1], b[3])
