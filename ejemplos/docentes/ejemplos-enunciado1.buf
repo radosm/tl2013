@@ -1,0 +1,27 @@
+
+
+// Onda Cuadrada de tres ciclos
+{1;-1}.loop(3).expand.loop(10).play ;sil.loop(5);
+
+// Drums
+{ {sin(8);sin(4);sin(2);sin(1)}.reduce * lin(1.0, 0.0)}.loop(10).play; sil(5).play;
+
+// Snare
+{ {sin(16, 0.9)+noise(0.1)}*lin(1.0, 0.1)}.loop(10).play;  sil(5).play;
+
+// Hi-Hat
+{ noise*linear(1.0, 0.25);noise.loop(7)*linear(0.25, 0.0) }.reduce.loop(10).play; sil(5).play;
+
+
+// Claps
+{ noise;sin(1); noise;noise.loop(3)*lin(1.0, 0.25);noise.loop(6)*lin(0.25, 0.0) }.reduce.loop(10).play; sil(5).play;
+
+
+// Instrumentos de percusion en una base ritmica
+{ {
+  { sin(8); sin(4); sin(2); sin(1)}.reduce * lin(1,0); silence.loop(7)
+} mix {
+  {{ sin(16, 0.9) + noise(0.1)} *lin(1.0, 0.1); silence.loop(3) }.loop(2)
+} mix {
+  { {noi*lin(1.0, 0.25); noi.loop(7)*lin(0.25, 0.0)}.reduce; sil}.loop(4)
+} }.loop(8).play
