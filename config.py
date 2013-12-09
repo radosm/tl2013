@@ -8,3 +8,6 @@ DEBUG_DESHABILITADO = 0
 DEBUG_SIMPLE = 1
 DEBUG_FULL = 2
 DEBUG = DEBUG_DESHABILITADO
+
+# Chequeo de tipos
+chequearTipos = True

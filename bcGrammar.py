@@ -7,7 +7,7 @@ import pygame
 pygame.init()
 pygame.mixer.init(frequency = config.SAMPLING_RATE, size = config.SAMPLE_SIZE, channels = 1, buffer = 4096)
 FIN_PLAY = pygame.USEREVENT + 1
-from debug import log
+from debug import log, errorTipos
 
 # Reglas de parsing
 
@@ -25,9 +25,9 @@ names = {}
 def bcSin(c, a = 1.0):
 
     if (a<=0 or a>1):
-        raise Exception('SIN: valores fuera de rango para amplitud');
+        errorTipos('SIN: valores fuera de rango para amplitud');
     if (c<0 or c!=int(c)):
-        raise Exception('SIN: valores fuera de rango para ciclos');
+        errorTipos('SIN: valores fuera de rango para ciclos');
 
     buff = array(range(0, config.BEAT), dtype = float)
     x = (c * 2 * pi) / config.BEAT
@@ -38,7 +38,7 @@ def bcSin(c, a = 1.0):
 def lin(a, b):
 
     if (a<-1 or a>1 or b<-1 or b>1):
-        raise Exception('LIN: valores fuera de rango');
+        errorTipos('LIN: valores fuera de rango');
 
     buff = array(range(0, config.BEAT), dtype = float)
     x = float((b - a)) / (config.BEAT-1)
@@ -55,7 +55,7 @@ def sil():
 def noi(a = 1.0):
 
     if (a<=0 or a>1):
-        raise Exception('NOI: valores fuera de rango para amplitud');
+        errorTipos('NOI: valores fuera de rango para amplitud');
 
     buff = array(range(0, config.BEAT), dtype = float)
     for i in range(0, config.BEAT):
@@ -65,7 +65,7 @@ def noi(a = 1.0):
 def resample(b, l):
 
     if (l<0 or l!=int(l)):
-        raise Exception('RESAMPLE: valores fuera de rango para nueva longitud');
+        errorTipos('RESAMPLE: valores fuera de rango para nueva longitud');
     
     nuevo = array(range(0, l), dtype = float)
     lenB = len(b)
@@ -76,7 +76,7 @@ def resample(b, l):
 def resize(b, l):
 
     if (l<0 or l!=int(l)):
-        raise Exception('RESIZE: valores fuera de rango para nueva longitud');
+        errorTipos('RESIZE: valores fuera de rango para nueva longitud');
     
     nuevo = array(range(0, l), dtype = float)
     lenB = len(b)
@@ -144,7 +144,7 @@ def p_buffer_masmenos(b):
     '''buffer : num snum'''
 
     if b[1]<-1 or b[1]>1 or b[2]<-1 or b[2]>1:
-        raise Exception('Valores de buffer deben estar en [-1,1]')
+        errorTipos('Valores de buffer deben estar en [-1,1]')
 
     b[0] = array([b[1] + b[2]], dtype = float)
     log('p_buffer_masmenos: %s %s = %s' % (b[1], b[2], b[0]))
@@ -153,7 +153,7 @@ def p_buffer_snum(b):
     '''buffer : buffer snum'''
 
     if b[2]<-1 or b[2]>1:
-        raise Exception('Valores de buffer deben estar en [-1,1]')
+        errorTipos('Valores de buffer deben estar en [-1,1]')
 
     b[0] = oper(lambda x, y: x + y, b[1], array([b[2]]))
     log('p_buffer_snum: %s + %s = %s' % (b[1], b[2], b[0]))
@@ -162,7 +162,7 @@ def p_buffer_num(b):
     '''buffer : num '''
 
     if b[1]<-1 or b[1]>1:
-        raise Exception('Valores de buffer deben estar en [-1,1]')
+        errorTipos('Valores de buffer deben estar en [-1,1]')
 
     b[0] = array([b[1]], dtype = float)
     log('p_buffer_num: %s' % b[1])
