@@ -14,7 +14,7 @@ from debug import log
 precedence = (
     ('left', 'CON'),
     ('left', 'MIX'),
-    ('left', 'SUM', 'SUB'),
+    ('left', 'ADD', 'SUB'),
     ('left', 'MUL', 'DIV'),
     ('left', '.')
 )
@@ -98,10 +98,10 @@ def p_buffer_mezcla(b):
     b[0] = oper(lambda x, y: (x + y) / 2, b[1], b[3])
     log('p_buffer_mezcla: %s & %s = %s' % (b[1], b[3], b[0]))
 
-def p_buffer_sum(b):
-    '''buffer : buffer SUM buffer'''
+def p_buffer_add(b):
+    '''buffer : buffer ADD buffer'''
     b[0] = oper(lambda x, y: x + y, b[1], b[3])
-    log('p_buffer_sum: %s + %s = %s' % (b[1], b[3], b[0]))
+    log('p_buffer_add: %s + %s = %s' % (b[1], b[3], b[0]))
 
 def p_buffer_res(b):
     '''buffer : buffer SUB buffer'''
@@ -120,7 +120,7 @@ def p_buffer_div(b):
 
 def p_buffer_masmenos(b):
     '''buffer : num snum'''
-    b[0] = b[1] + b[2]
+    b[0] = array([b[1] + b[2]], dtype = float)
     log('p_buffer_masmenos: %s %s = %s' % (b[1], b[2], b[0]))
 
 def p_buffer_snum(b):
@@ -251,8 +251,8 @@ def p_m_post(m):
 
 def p_m_loop(m):
     '''m : buffer '.' LOOP par'''
-    l = int(m[4])
-    m[0] = resize(m[1], len(m[1]) * l)
+    l = m[4]
+    m[0] = resize(m[1], int(len(m[1]) * l))
     log('p_m_loop: %s %s' %(m[1], m[4]))
 
 def p_m_tune(m):
