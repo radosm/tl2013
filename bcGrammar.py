@@ -140,15 +140,6 @@ def p_buffer_div(b):
     b[0] = oper(lambda x, y: x / y, b[1], b[3])
     log('p_buffer_div: %s / %s = %s' % (b[1], b[3], b[0]))
 
-##def p_buffer_masmenos(b):
-##    '''buffer : num snum'''
-##
-##    if b[1]<-1 or b[1]>1 or b[2]<-1 or b[2]>1:
-##        errorTipos('Valores de buffer deben estar en [-1,1]')
-##
-##    b[0] = array([b[1] + b[2]], dtype = float)
-##    log('p_buffer_masmenos: %s %s = %s' % (b[1], b[2], b[0]))
-
 def p_buffer_snum(b):
     '''buffer : buffer snum'''
 
