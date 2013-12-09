@@ -5,7 +5,7 @@ literals = '{}().,'
 tokens = (
     'SINT', 'UINT', 'SFLOAT', 'UFLOAT', # Tipos basicos
     'SIN', 'LIN', 'SIL', 'NOI', # Generadores
-    'CON', 'MIX', 'SUM', 'SUB', 'MUL', 'DIV', # Operadores
+    'CON', 'MIX', 'ADD', 'SUB', 'MUL', 'DIV', # Operadores
     'PLAY', 'POST', 'LOOP', 'TUNE', 'FILL', 'REDUCE', 'EXPAND' # Metodos
 )
 
@@ -22,7 +22,7 @@ t_TUNE   = r'tune'
 t_FILL   = r'fill'
 t_CON    = r'con|;'
 t_MIX    = r'mix|&'
-t_SUM    = r'sum|\+'
+t_ADD    = r'add|\+'
 t_SUB    = r'sub|-'
 t_MUL    = r'mul|\*'
 t_DIV    = r'div|/'

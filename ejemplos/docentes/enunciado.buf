@@ -1,0 +1,21 @@
+// Ejemplos encontrados en el enunciado
+// de la primera parte del trabajo practico
+
+{
+    {{1;2;3;4} * 2}.post;
+    {{8/{1;2;4}} + 1}.post;
+    {{1;2;3;4} add {1;0;-1;0}}.post;
+
+
+// Ejemplos encontrados en el enunciado
+// de la segunda parte del trabajo practico
+
+    1;2.post;
+    {1;2}.post;
+    {1 +2*3}.post;
+    {{2;1} mul {3;3;3}}.post;
+    {1-1;2-1}.post;
+    {4+1*-2 & {2;4;6}}.post;
+    {0;1.loop(2)}.post;
+    {0;1;2;3}.loop(0.5).post
+}
