@@ -3,7 +3,7 @@ import ply.lex as lex
 literals = '{}().,'
 
 tokens = (
-    'UINT', 'SINT', 'UFLOAT', 'SFLOAT', # Tipos basicos
+    'SINT', 'UINT', 'SFLOAT', 'UFLOAT', # Tipos basicos
     'SIN', 'LIN', 'SIL', 'NOI', # Generadores
     'CON', 'MIX', 'SUM', 'SUB', 'MUL', 'DIV', # Operadores
     'PLAY', 'POST', 'LOOP', 'TUNE', 'FILL', 'REDUCE', 'EXPAND' # Metodos
@@ -27,8 +27,8 @@ t_SUB    = r'sub|-'
 t_MUL    = r'mul|\*'
 t_DIV    = r'div|/'
 
-def t_UFLOAT(t):
-    r'\d*\.\d+'
+def t_SFLOAT(t):
+    r'[+-]\d*\.\d+'
     try:
         t.value = float(t.value)
     except ValueError:
@@ -36,8 +36,8 @@ def t_UFLOAT(t):
         t.value = 0
     return t
 
-def t_SFLOAT(t):
-    r'[+-]\d*\.\d+'
+def t_UFLOAT(t):
+    r'\d*\.\d+'
     try:
         t.value = float(t.value)
     except ValueError:
