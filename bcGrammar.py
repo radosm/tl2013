@@ -108,16 +108,6 @@ def p_buffer_res(b):
     b[0] = oper(lambda x, y: x - y, b[1], b[3])
     log('p_buffer_res: %s - %s = %s' % (b[1], b[3], b[0]))
 
-def p_buffer_masmenos(b):
-    '''buffer : num snum'''
-    b[0] = b[1] + b[2]
-    log('p_buffer_masmenos: %s %s = %s' % (b[1], b[2], b[0]))
-
-def p_buffer_snum(b):
-    '''buffer : buffer snum'''
-    b[0] = oper(lambda x, y: x + y, b[1], array([b[2]]))
-    log('p_buffer_snum: %s + %s = %s' % (b[1], b[2], b[0]))
-
 def p_buffer_mul(b):
     '''buffer : buffer MUL buffer'''
     b[0] = oper(lambda x, y: x * y, b[1], b[3])
@@ -127,6 +117,16 @@ def p_buffer_div(b):
     '''buffer : buffer DIV buffer'''
     b[0] = oper(lambda x, y: x / y, b[1], b[3])
     log('p_buffer_div: %s / %s = %s' % (b[1], b[3], b[0]))
+
+def p_buffer_masmenos(b):
+    '''buffer : num snum'''
+    b[0] = b[1] + b[2]
+    log('p_buffer_masmenos: %s %s = %s' % (b[1], b[2], b[0]))
+
+def p_buffer_snum(b):
+    '''buffer : buffer snum'''
+    b[0] = oper(lambda x, y: x + y, b[1], array([b[2]]))
+    log('p_buffer_snum: %s + %s = %s' % (b[1], b[2], b[0]))
 
 def p_buffer_num(b):
     '''buffer : num '''
@@ -225,8 +225,13 @@ def p_num(p):
 
 def p_snum(p):
     '''snum : SFLOAT
-            | SINT '''
-    p[0] = p[1]
+            | SINT 
+            | snum MUL num
+            | snum DIV num '''
+    if len(p) == 2:
+        p[0] = p[1] 
+    else:
+        p[0] = p[1] * p[3] if p[2]=='*' else p[1] / p[3]
 
 def p_par2(p):
     '''par2 : '(' num ',' num ')' '''
@@ -239,7 +244,7 @@ def p_m_post(m):
     print(' '.join(
         map(
             lambda x: str(round(x, 2)),
-            m[1])
+            m[1] if type(m[1]) is not int else array([m[1]]))
         )
     )
     log('p_m_post: %s' % m[1])
