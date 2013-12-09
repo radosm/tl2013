@@ -108,6 +108,11 @@ def p_buffer_res(b):
     b[0] = oper(lambda x, y: x - y, b[1], b[3])
     log('p_buffer_res: %s - %s = %s' % (b[1], b[3], b[0]))
 
+def p_buffer_masmenos(b):
+    '''buffer : num snum'''
+    b[0] = b[1] + b[2]
+    log('p_buffer_masmenos: %s %s = %s' % (b[1], b[2], b[0]))
+
 def p_buffer_mul(b):
     '''buffer : buffer MUL buffer'''
     b[0] = oper(lambda x, y: x * y, b[1], b[3])
@@ -202,14 +207,20 @@ def p_g(g):
         log('p_g: sil')
 
 def p_par(p):
-    '''par : '(' num ')'
-           | '(' SUM num ')' '''
+    '''par : '(' num ')' '''
     p[0] = p[2] if len(p) == 4 else p[3]
     log('p_par %s' % p[2])
 
 def p_num(p):
-    '''num : FLOAT
-           | INT '''
+    '''num : SFLOAT
+           | UFLOAT
+           | SINT
+           | UINT '''
+    p[0] = p[1]
+
+def p_snum(p):
+    '''snum : SFLOAT
+            | SINT '''
     p[0] = p[1]
 
 def p_par2(p):
