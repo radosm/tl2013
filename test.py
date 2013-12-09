@@ -7,16 +7,17 @@ ejemplos = glob('ejemplos/*/*buf')
 def mostrarUso():
     print 'Uso: python  %s [-OPCION] <archivo>' % argv[0]
     print 'Descripcion'
-    print '\t  -i \t Con esta opcion podes pasarle un archivo con buffers.'
-    print '\t  -f \t Con esta opcion podes pasarle los buffers por consola.'
+    print '\t  -f \t Con esta opcion podes pasarle un archivo con buffers.'
+    print '\t  -i \t Con esta opcion podes pasarle los buffers por consola.'
     print 'Ejemplos disponibles:\n\t%s' % '\n\t'.join(ejemplos)
 
 def run(testCallback):
-    if len(argv) != 3:
+    if not ((len(argv) == 2 and argv[1] == '-i') or 
+            (len(argv) == 3 and argv[1] == '-f')): 
         mostrarUso()
-    elif argv[1] == '-f':
+    elif  len(argv) == 3 and argv[1] == '-f':
         if os.path.isfile(argv[2]):
-            archivo = open(argv[1], 'r')
+            archivo = open(argv[2], 'r')
             entrada = archivo.read()
             print '----------------------------------------------------'
             print '                  Cadena a procesar'
@@ -26,8 +27,8 @@ def run(testCallback):
             testCallback(entrada)
             archivo.close()
         else:
-            print 'El archivo %s no existe' % argv[1]
-    elif argv[1] == '-i':
+            print 'El archivo %s no existe' % argv[2]
+    elif len(argv) == 2 and argv[1] == '-i':
         print 'q para salir \n'
         while True:
             entrada = raw_input(">> ")
